@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Sports Tournament Management System</title>
+  <style>
+    * { box-sizing: border-box; }
+    body        { font-family: Arial, sans-serif; margin: 0; background: #f4f4f4; color: #222; }
+    header      { background: #1a73e8; color: white; padding: 16px 24px; }
+    header h1   { margin: 0; font-size: 22px; }
+    header p    { margin: 4px 0 0; font-size: 13px; opacity: 0.85; }
+
+    /* Sport Tabs */
+    .sport-tabs { background: #fff; border-bottom: 2px solid #ddd; padding: 0 24px; display: flex; gap: 4px; flex-wrap: wrap; }
+    .sport-tabs a {
+      display: inline-block; padding: 10px 18px; text-decoration: none;
+      font-size: 14px; font-weight: bold; color: #555;
+      border-bottom: 3px solid transparent; margin-bottom: -2px;
+    }
+    .sport-tabs a:hover  { color: #1a73e8; }
+    .sport-tabs a.active { color: #1a73e8; border-bottom-color: #1a73e8; }
+
+    /* Section nav */
+    nav         { background: #f8f8f8; border-bottom: 1px solid #ddd; padding: 8px 24px; display: flex; gap: 8px; flex-wrap: wrap; }
+    nav a       { text-decoration: none; color: #1a73e8; font-size: 13px; padding: 5px 10px; border-radius: 4px; border: 1px solid #ddd; background: white; }
+    nav a:hover { background: #e8f0fe; }
+
+    main        { padding: 24px; max-width: 1100px; margin: 0 auto; }
+    section     { background: white; border: 1px solid #ddd; border-radius: 6px; padding: 20px; margin-bottom: 24px; }
+    h2          { margin-top: 0; font-size: 18px; border-bottom: 2px solid #1a73e8; padding-bottom: 8px; color: #1a73e8; }
+    h3          { font-size: 14px; margin-bottom: 8px; color: #444; }
+
+    table       { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th          { background: #1a73e8; color: white; padding: 8px 10px; text-align: left; }
+    td          { padding: 7px 10px; border-bottom: 1px solid #eee; }
+    tr:hover td { background: #f9f9f9; }
+
+    form        { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; margin-top: 10px; }
+    input, select { padding: 7px 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 13px; }
+    label       { font-size: 12px; color: #555; display: block; margin-bottom: 2px; }
+    .field      { display: flex; flex-direction: column; }
+
+    button      { padding: 8px 18px; border: none; border-radius: 4px; cursor: pointer; font-size: 13px; font-weight: bold; }
+    .btn-add    { background: #1a73e8; color: white; }
+    .btn-del    { background: #e53935; color: white; }
+    .btn-add:hover { background: #1558b0; }
+    .btn-del:hover { background: #b71c1c; }
+
+    .msg  { background: #e6f4ea; border: 1px solid #a8d5b5; color: #2e7d32; padding: 10px 16px; border-radius: 4px; margin-bottom: 16px; font-size: 14px; }
+    .err  { background: #fdecea; border: 1px solid #f5c6c6; color: #c62828; padding: 10px 16px; border-radius: 4px; margin-bottom: 16px; font-size: 14px; }
+
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    @media(max-width: 700px) { .two-col { grid-template-columns: 1fr; } }
+
+    .sport-badge { display: inline-block; background: #e8f0fe; color: #1a73e8; padding: 2px 8px; border-radius: 10px; font-size: 12px; }
+    .empty { color: #999; font-size: 13px; padding: 10px 0; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>🏆 Sports Tournament Management System</h1>
+  <p>Currently viewing: <strong>{{ selected_sport_name }}</strong></p>
+</header>
+
+<!-- Sport Tabs -->
+<div class="sport-tabs">
+  {% for s in sports %}
+    <a href="/?sport_id={{ s.sport_id }}"
+       class="{{ 'active' if s.sport_id == selected_sport_id else '' }}">
+      {{ s.sport_name }}
+    </a>
+  {% endfor %}
+</div>
+
+<!-- Section Links -->
+<nav>
+  <a href="#matches">📋 Match History</a>
+  <a href="#standings">🏅 Standings</a>
+  <a href="#manage-teams">👥 Teams</a>
+  <a href="#manage-players">🏃 Players</a>
+  <a href="#manage-referees">🟡 Referees</a>
+  <a href="#manage-matches">➕ Add Match</a>
+</nav>
+
+<main>
+
+  {% if message %}
+    <div class="msg">✅ {{ message }}</div>
+  {% endif %}
+  {% if error %}
+    <div class="err">❌ {{ error }}</div>
+  {% endif %}
+
+  <!-- ==========================================
+       MATCH HISTORY
+       ========================================== -->
+  <section id="matches">
+    <h2>📋 Match History — {{ selected_sport_name }}</h2>
+    <p style="font-size:12px;color:#888;">Complex JOIN: Matches → Sports, Venues, Referees, Team1, Team2</p>
+    {% if matches %}
+    <table>
+      <thead>
+        <tr>
+          <th>#</th><th>Date</th><th>Team 1</th><th>Score</th>
+          <th>Team 2</th><th>Venue</th><th>Referee</th><th>Winner</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for m in matches %}
+        <tr>
+          <td>{{ m.match_id }}</td>
+          <td>{{ m.match_date }}</td>
+          <td>{{ m.team1_name }}</td>
+          <td><b>{{ m.team1_score }} – {{ m.team2_score }}</b></td>
+          <td>{{ m.team2_name }}</td>
+          <td>{{ m.venue_name }}</td>
+          <td>{{ m.referee_name }}</td>
+          <td>{{ m.winner }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+      <p class="empty">No matches recorded for {{ selected_sport_name }} yet.</p>
+    {% endif %}
+  </section>
+
+  <!-- ==========================================
+       TOURNAMENT STANDINGS (VIEW)
+       ========================================== -->
+  <section id="standings">
+    <h2>🏅 Tournament Standings — {{ selected_sport_name }}</h2>
+    <p style="font-size:12px;color:#888;">Source: <code>Tournament_Standings</code> VIEW</p>
+    {% if standings %}
+    <table>
+      <thead>
+        <tr><th>Team</th><th>Sport</th><th>Wins</th><th>Losses</th></tr>
+      </thead>
+      <tbody>
+        {% for s in standings %}
+        <tr>
+          <td>{{ s.team_name }}</td>
+          <td><span class="sport-badge">{{ s.sport_name }}</span></td>
+          <td>{{ s.wins }}</td>
+          <td>{{ s.losses }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+      <p class="empty">No standings yet for {{ selected_sport_name }}.</p>
+    {% endif %}
+  </section>
+
+  <!-- ==========================================
+       MANAGE TEAMS
+       ========================================== -->
+  <section id="manage-teams">
+    <h2>👥 Teams — {{ selected_sport_name }}</h2>
+    <div class="two-col">
+      <div>
+        <h3>Add Team</h3>
+        <form action="/add-team" method="POST">
+          <input type="hidden" name="sport_id" value="{{ selected_sport_id }}" />
+          <div class="field">
+            <label>Team Name</label>
+            <input name="team_name" placeholder="e.g. Chennai Strikers" required />
+          </div>
+          <button type="submit" class="btn-add">Add Team</button>
+        </form>
+
+        <br/>
+        <h3>Delete Team</h3>
+        {% if teams %}
+        <form action="/delete-team" method="POST">
+          <input type="hidden" name="sport_id" value="{{ selected_sport_id }}" />
+          <div class="field">
+            <label>Select Team</label>
+            <select name="team_id" required>
+              {% for t in teams %}
+                <option value="{{ t.team_id }}">{{ t.team_name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <button type="submit" class="btn-del" onclick="return confirm('Delete this team?')">Delete</button>
+        </form>
+        {% else %}
+          <p class="empty">No teams to delete.</p>
+        {% endif %}
+      </div>
+
+      <div>
+        <h3>All {{ selected_sport_name }} Teams</h3>
+        {% if teams %}
+        <table>
+          <thead><tr><th>ID</th><th>Team</th><th>Wins</th><th>Losses</th></tr></thead>
+          <tbody>
+            {% for t in teams %}
+            <tr>
+              <td>{{ t.team_id }}</td>
+              <td>{{ t.team_name }}</td>
+              <td>{{ t.total_wins }}</td>
+              <td>{{ t.total_losses }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% else %}
+          <p class="empty">No teams added for {{ selected_sport_name }} yet.</p>
+        {% endif %}
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       MANAGE PLAYERS
+       ========================================== -->
+  <section id="manage-players">
+    <h2>🏃 Players — {{ selected_sport_name }}</h2>
+    <div class="two-col">
+      <div>
+        <h3>Add Player</h3>
+        {% if teams %}
+        <form action="/add-player" method="POST">
+          <input type="hidden" name="sport_id" value="{{ selected_sport_id }}" />
+          <div class="field">
+            <label>Player Name</label>
+            <input name="player_name" placeholder="e.g. Arjun Sharma" required />
+          </div>
+          <div class="field">
+            <label>Age</label>
+            <input name="age" type="number" min="1" max="100" placeholder="22" required />
+          </div>
+          <div class="field">
+            <label>Position</label>
+            <input name="position" placeholder="e.g. Forward" />
+          </div>
+          <div class="field">
+            <label>Team ({{ selected_sport_name }} only)</label>
+            <select name="team_id" required>
+              {% for t in teams %}
+                <option value="{{ t.team_id }}">{{ t.team_name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <button type="submit" class="btn-add">Add Player</button>
+        </form>
+        {% else %}
+          <p class="empty">Add a {{ selected_sport_name }} team first before adding players.</p>
+        {% endif %}
+
+        <br/>
+        <h3>Delete Player</h3>
+        {% if players %}
+        <form action="/delete-player" method="POST">
+          <input type="hidden" name="sport_id" value="{{ selected_sport_id }}" />
+          <div class="field">
+            <label>Select Player</label>
+            <select name="player_id" required>
+              {% for p in players %}
+                <option value="{{ p.player_id }}">{{ p.player_name }} — {{ p.team_name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <button type="submit" class="btn-del" onclick="return confirm('Delete this player?')">Delete</button>
+        </form>
+        {% else %}
+          <p class="empty">No players to delete.</p>
+        {% endif %}
+      </div>
+
+      <div>
+        <h3>All {{ selected_sport_name }} Players</h3>
+        {% if players %}
+        <table>
+          <thead><tr><th>ID</th><th>Name</th><th>Age</th><th>Position</th><th>Team</th></tr></thead>
+          <tbody>
+            {% for p in players %}
+            <tr>
+              <td>{{ p.player_id }}</td>
+              <td>{{ p.player_name }}</td>
+              <td>{{ p.age }}</td>
+              <td>{{ p.position }}</td>
+              <td>{{ p.team_name }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% else %}
+          <p class="empty">No players added for {{ selected_sport_name }} yet.</p>
+        {% endif %}
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       MANAGE REFEREES
+       ========================================== -->
+  <section id="manage-referees">
+    <h2>🟡 Referees — {{ selected_sport_name }}</h2>
+    <div class="two-col">
+      <div>
+        <h3>Add Referee</h3>
+        <form action="/add-referee" method="POST">
+          <input type="hidden" name="sport_id" value="{{ selected_sport_id }}" />
+          <div class="field">
+            <label>Referee Name</label>
+            <input name="referee_name" placeholder="e.g. Rajesh Kumar" required />
+          </div>
+          <button type="submit" class="btn-add">Add Referee</button>
+        </form>
+
+        <br/>
+        <h3>Delete Referee</h3>
+        {% if referees %}
+        <form action="/delete-referee" method="POST">
+          <input type="hidden" name="sport_id" value="{{ selected_sport_id }}" />
+          <div class="field">
+            <label>Select Referee</label>
+            <select name="referee_id" required>
+              {% for r in referees %}
+                <option value="{{ r.referee_id }}">{{ r.referee_name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <button type="submit" class="btn-del" onclick="return confirm('Delete this referee?')">Delete</button>
+        </form>
+        {% else %}
+          <p class="empty">No referees to delete.</p>
+        {% endif %}
+      </div>
+
+      <div>
+        <h3>All {{ selected_sport_name }} Referees</h3>
+        {% if referees %}
+        <table>
+          <thead><tr><th>ID</th><th>Name</th><th>Sport</th></tr></thead>
+          <tbody>
+            {% for r in referees %}
+            <tr>
+              <td>{{ r.referee_id }}</td>
+              <td>{{ r.referee_name }}</td>
+              <td><span class="sport-badge">{{ r.sport_name }}</span></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% else %}
+          <p class="empty">No referees added for {{ selected_sport_name }} yet.</p>
+        {% endif %}
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       ADD / DELETE MATCH
+       ========================================== -->
+  <section id="manage-matches">
+    <h2>➕ Add / Delete Match — {{ selected_sport_name }}</h2>
+    <p style="font-size:12px;color:#888;">
+      ⚡ Only <strong>{{ selected_sport_name }}</strong> teams and referees shown.
+      The <code>After_Match_Insert</code> trigger auto-updates wins &amp; losses.
+      Only future dates are allowed.
+    </p>
+    <div class="two-col">
+      <div>
+        <h3>Schedule Match</h3>
+        {% if teams|length >= 2 and referees %}
+        <form action="/add-match" method="POST">
+          <input type="hidden" name="sport_id" value="{{ selected_sport_id }}" />
+          <div class="field">
+            <label>Venue</label>
+            <select name="venue_id" required>
+              {% for v in venues %}
+                <option value="{{ v.venue_id }}">{{ v.venue_name }}, {{ v.city }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="field">
+            <label>Referee ({{ selected_sport_name }} only)</label>
+            <select name="referee_id" required>
+              {% for r in referees %}
+                <option value="{{ r.referee_id }}">{{ r.referee_name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="field">
+            <label>Team 1 ({{ selected_sport_name }} only)</label>
+            <select name="team1_id" required>
+              {% for t in teams %}
+                <option value="{{ t.team_id }}">{{ t.team_name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="field">
+            <label>Team 1 Score</label>
+            <input name="team1_score" type="number" min="0" value="0" required style="width:65px"/>
+          </div>
+          <div class="field">
+            <label>Team 2 ({{ selected_sport_name }} only)</label>
+            <select name="team2_id" required>
+              {% for t in teams %}
+                <option value="{{ t.team_id }}">{{ t.team_name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="field">
+            <label>Team 2 Score</label>
+            <input name="team2_score" type="number" min="0" value="0" required style="width:65px"/>
+          </div>
+          <div class="field">
+            <label>Match Date (future dates only)</label>
+            <!-- min="{{ today }}" blocks past dates in the date picker -->
+            <input name="match_date" type="date" min="{{ today }}" required />
+          </div>
+          <button type="submit" class="btn-add">Schedule Match</button>
+        </form>
+        {% else %}
+          <p class="empty">
+            You need at least <strong>2 teams</strong> and <strong>1 referee</strong>
+            under {{ selected_sport_name }} to schedule a match.
+          </p>
+        {% endif %}
+      </div>
+
+      <div>
+        <h3>Delete Match</h3>
+        {% if matches %}
+        <form action="/delete-match" method="POST">
+          <input type="hidden" name="sport_id" value="{{ selected_sport_id }}" />
+          <div class="field">
+            <label>Select Match</label>
+            <select name="match_id" required>
+              {% for m in matches %}
+                <option value="{{ m.match_id }}">
+                  #{{ m.match_id }} – {{ m.team1_name }} vs {{ m.team2_name }} ({{ m.match_date }})
+                </option>
+              {% endfor %}
+            </select>
+          </div>
+          <button type="submit" class="btn-del" onclick="return confirm('Delete this match?')">Delete</button>
+        </form>
+        {% else %}
+          <p class="empty">No matches to delete.</p>
+        {% endif %}
+      </div>
+    </div>
+  </section>
+
+</main>
+</body>
+</html>
