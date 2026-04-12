@@ -3,64 +3,226 @@
 <head>
   <meta charset="UTF-8" />
   <title>Sports Tournament Management System</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --bg-color: #f4f6f8;
+      --card-bg: #ffffff;
+      --text-main: #1f2937;
+      --text-muted: #6b7280;
+      --border-color: #e5e7eb;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --success-bg: #dcfce7;
+      --success-text: #166534;
+      --success-border: #bbf7d0;
+      --danger-bg: #fee2e2;
+      --danger-text: #991b1b;
+      --danger-border: #fecaca;
+      --danger-btn: #ef4444;
+      --danger-btn-hover: #dc2626;
+      --header-bg: rgba(255, 255, 255, 0.85);
+      --badge-bg: #dbeafe;
+      --badge-text: #1e40af;
+      --shadow: 0 10px 15px -3px rgb(0 0 0 / 0.05), 0 4px 6px -4px rgb(0 0 0 / 0.05);
+      --header-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05);
+      --input-bg: #ffffff;
+      --table-hover: #f9fafb;
+    }
+
+    [data-theme="dark"] {
+      --bg-color: #0f172a;
+      --card-bg: #1e293b;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --border-color: #334155;
+      --primary: #3b82f6;
+      --primary-hover: #60a5fa;
+      --success-bg: rgba(22, 101, 52, 0.2);
+      --success-text: #4ade80;
+      --success-border: #166534;
+      --danger-bg: rgba(153, 27, 27, 0.2);
+      --danger-text: #f87171;
+      --danger-border: #991b1b;
+      --danger-btn: #dc2626;
+      --danger-btn-hover: #b91c1c;
+      --header-bg: rgba(30, 41, 59, 0.85);
+      --badge-bg: #1e3a8a;
+      --badge-text: #bfdbfe;
+      --shadow: 0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.3);
+      --header-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.3);
+      --input-bg: #0f172a;
+      --table-hover: #334155;
+    }
+
+    /* Base and Shield */
     * { box-sizing: border-box; }
-    body        { font-family: Arial, sans-serif; margin: 0; background: #f4f4f4; color: #222; }
-    header      { background: #1a73e8; color: white; padding: 16px 24px; }
-    header h1   { margin: 0; font-size: 22px; }
-    header p    { margin: 4px 0 0; font-size: 13px; opacity: 0.85; }
+    body { 
+      font-family: 'Inter', sans-serif; 
+      margin: 0; padding: 0;
+      background: var(--bg-color); 
+      color: var(--text-main); 
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    /* Eye Comfort Shield Overlay */
+    #eye-shield {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background-color: rgba(255, 170, 0, 0.15);
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      mix-blend-mode: multiply;
+    }
+    #eye-shield.active { opacity: 1; }
+    [data-theme="dark"] #eye-shield { rgba(255, 140, 0, 0.08); }
+
+    /* Header */
+    header { 
+      background: var(--header-bg); 
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: 16px 32px; 
+      position: sticky; top: 0; z-index: 100;
+      box-shadow: var(--header-shadow);
+      display: flex; justify-content: space-between; align-items: center;
+      transition: background-color 0.3s;
+    }
+    .header-info h1 { margin: 0; font-size: 24px; font-weight: 700; letter-spacing: -0.5px; display: flex; align-items: center; gap: 8px;}
+    .header-info p { margin: 6px 0 0; font-size: 14px; color: var(--text-muted); }
+    
+    .toggles { display: flex; gap: 12px; }
+    .toggle-btn {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 18px;
+      transition: all 0.2s;
+      box-shadow: var(--shadow);
+    }
+    .toggle-btn:hover { border-color: var(--primary); color: var(--primary); transform: scale(1.05); }
 
     /* Sport Tabs */
-    .sport-tabs { background: #fff; border-bottom: 2px solid #ddd; padding: 0 24px; display: flex; gap: 4px; flex-wrap: wrap; }
-    .sport-tabs a {
-      display: inline-block; padding: 10px 18px; text-decoration: none;
-      font-size: 14px; font-weight: bold; color: #555;
-      border-bottom: 3px solid transparent; margin-bottom: -2px;
+    .sport-tabs { 
+      padding: 16px 32px 0; 
+      display: flex; gap: 12px; flex-wrap: wrap; 
     }
-    .sport-tabs a:hover  { color: #1a73e8; }
-    .sport-tabs a.active { color: #1a73e8; border-bottom-color: #1a73e8; }
+    .sport-tabs a {
+      display: inline-block; padding: 12px 24px; text-decoration: none;
+      font-size: 15px; font-weight: 600; color: var(--text-muted);
+      border-bottom: 3px solid transparent; 
+      transition: all 0.2s;
+    }
+    .sport-tabs a:hover  { color: var(--primary); }
+    .sport-tabs a.active { color: var(--primary); border-bottom-color: var(--primary); }
 
-    /* Section nav */
-    nav         { background: #f8f8f8; border-bottom: 1px solid #ddd; padding: 8px 24px; display: flex; gap: 8px; flex-wrap: wrap; }
-    nav a       { text-decoration: none; color: #1a73e8; font-size: 13px; padding: 5px 10px; border-radius: 4px; border: 1px solid #ddd; background: white; }
-    nav a:hover { background: #e8f0fe; }
+    /* Section Nav */
+    nav { 
+      padding: 16px 32px; display: flex; gap: 12px; flex-wrap: wrap; 
+      margin-bottom: 12px;
+    }
+    nav a { 
+      text-decoration: none; color: var(--text-main); font-size: 14px; font-weight: 500; 
+      padding: 8px 16px; border-radius: 20px; border: 1px solid var(--border-color); 
+      background: var(--card-bg);
+      transition: all 0.2s;
+      box-shadow: 0 1px 2px rgb(0 0 0 / 0.05);
+    }
+    nav a:hover { border-color: var(--primary); color: var(--primary); }
 
-    main        { padding: 24px; max-width: 1100px; margin: 0 auto; }
-    section     { background: white; border: 1px solid #ddd; border-radius: 6px; padding: 20px; margin-bottom: 24px; }
-    h2          { margin-top: 0; font-size: 18px; border-bottom: 2px solid #1a73e8; padding-bottom: 8px; color: #1a73e8; }
-    h3          { font-size: 14px; margin-bottom: 8px; color: #444; }
+    /* Main Container */
+    main { padding: 0 32px 40px; max-width: 1200px; margin: 0 auto; }
+    
+    /* Display Messages */
+    .msg, .err { 
+      padding: 16px 20px; border-radius: 8px; margin-bottom: 24px; font-size: 14px; font-weight: 500;
+      display: flex; align-items: center; gap: 8px;
+      animation: fadeInDown 0.4s ease-out;
+    }
+    .msg { background: var(--success-bg); border: 1px solid var(--success-border); color: var(--success-text); }
+    .err { background: var(--danger-bg); border: 1px solid var(--danger-border); color: var(--danger-text); }
+    @keyframes fadeInDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
 
-    table       { width: 100%; border-collapse: collapse; font-size: 13px; }
-    th          { background: #1a73e8; color: white; padding: 8px 10px; text-align: left; }
-    td          { padding: 7px 10px; border-bottom: 1px solid #eee; }
-    tr:hover td { background: #f9f9f9; }
+    /* Cards / Sections */
+    section { 
+      background: var(--card-bg); 
+      border: 1px solid var(--border-color); 
+      border-radius: 12px; padding: 24px; margin-bottom: 32px; 
+      box-shadow: var(--shadow);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    section:hover { box-shadow: 0 15px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1); }
+    [data-theme="dark"] section:hover { box-shadow: 0 15px 25px -5px rgb(0 0 0 / 0.5); }
+    
+    h2 { 
+      margin-top: 0; font-size: 20px; font-weight: 700; color: var(--text-main);
+      display: flex; align-items: center; gap: 8px;
+      margin-bottom: 8px;
+    }
+    .section-desc { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; }
+    h3 { font-size: 16px; margin-bottom: 12px; color: var(--text-main); font-weight: 600; }
 
-    form        { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; margin-top: 10px; }
-    input, select { padding: 7px 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 13px; }
-    label       { font-size: 12px; color: #555; display: block; margin-bottom: 2px; }
-    .field      { display: flex; flex-direction: column; }
+    /* Tables */
+    .table-container { overflow-x: auto; border-radius: 8px; border: 1px solid var(--border-color); }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; text-align: left; }
+    th { background: rgba(0,0,0,0.02); color: var(--text-muted); font-weight: 600; padding: 12px 16px; border-bottom: 1px solid var(--border-color); }
+    [data-theme="dark"] th { background: rgba(255,255,255,0.02); }
+    td { padding: 12px 16px; border-bottom: 1px solid var(--border-color); color: var(--text-main); }
+    tr:last-child td { border-bottom: none; }
+    tr { transition: background-color 0.2s; }
+    tr:hover td { background: var(--table-hover); }
 
-    button      { padding: 8px 18px; border: none; border-radius: 4px; cursor: pointer; font-size: 13px; font-weight: bold; }
-    .btn-add    { background: #1a73e8; color: white; }
-    .btn-del    { background: #e53935; color: white; }
-    .btn-add:hover { background: #1558b0; }
-    .btn-del:hover { background: #b71c1c; }
+    /* Forms */
+    form { display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-end; }
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    label { font-size: 13px; font-weight: 500; color: var(--text-muted); }
+    input, select { 
+      padding: 10px 14px; border: 1px solid var(--border-color); border-radius: 6px; 
+      font-size: 14px; font-family: 'Inter', sans-serif;
+      background: var(--input-bg); color: var(--text-main);
+      transition: all 0.2s; outline: none;
+    }
+    input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15); }
+    
+    /* Buttons */
+    button { 
+      padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; 
+      font-size: 14px; font-weight: 600; font-family: 'Inter', sans-serif;
+      transition: all 0.2s; display: inline-flex; align-items: center; justify-content: center;
+    }
+    .btn-add { background: var(--primary); color: white; }
+    .btn-del { background: var(--danger-btn); color: white; }
+    .btn-add:hover { background: var(--primary-hover); transform: translateY(-1px); }
+    .btn-del:hover { background: var(--danger-btn-hover); transform: translateY(-1px); }
 
-    .msg  { background: #e6f4ea; border: 1px solid #a8d5b5; color: #2e7d32; padding: 10px 16px; border-radius: 4px; margin-bottom: 16px; font-size: 14px; }
-    .err  { background: #fdecea; border: 1px solid #f5c6c6; color: #c62828; padding: 10px 16px; border-radius: 4px; margin-bottom: 16px; font-size: 14px; }
+    .two-col { display: grid; grid-template-columns: 1fr 1.5fr; gap: 32px; }
+    @media(max-width: 900px) { .two-col { grid-template-columns: 1fr; } }
 
-    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-    @media(max-width: 700px) { .two-col { grid-template-columns: 1fr; } }
+    .sport-badge { display: inline-block; background: var(--badge-bg); color: var(--badge-text); padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 600;}
+    .empty { color: var(--text-muted); font-size: 14px; padding: 20px; text-align: center; background: rgba(0,0,0,0.01); border-radius: 8px; border: 1px dashed var(--border-color); }
+    [data-theme="dark"] .empty { background: rgba(255,255,255,0.01); }
 
-    .sport-badge { display: inline-block; background: #e8f0fe; color: #1a73e8; padding: 2px 8px; border-radius: 10px; font-size: 12px; }
-    .empty { color: #999; font-size: 13px; padding: 10px 0; }
   </style>
 </head>
 <body>
 
+<div id="eye-shield"></div>
+
 <header>
-  <h1>🏆 Sports Tournament Management System</h1>
-  <p>Currently viewing: <strong>{{ selected_sport_name }}</strong></p>
+  <div class="header-info">
+    <h1>🏆 Sports Tournament Management</h1>
+    <p>Currently viewing: <strong>{{ selected_sport_name }}</strong></p>
+  </div>
+  <div class="toggles">
+    <button class="toggle-btn" id="theme-toggle" title="Toggle Dark Mode">🌙</button>
+    <button class="toggle-btn" id="shield-toggle" title="Toggle Eye Comfort Shield">👓</button>
+  </div>
 </header>
 
 <!-- Sport Tabs -->
@@ -96,33 +258,41 @@
        MATCH HISTORY
        ========================================== -->
   <section id="matches">
-    <h2>📋 Match History — {{ selected_sport_name }}</h2>
-    <p style="font-size:12px;color:#888;">Complex JOIN: Matches → Sports, Venues, Referees, Team1, Team2</p>
+    <h2>📋 Match History</h2>
+    <div class="section-desc">Complex JOIN: Matches → Sports, Venues, Referees, Team1, Team2</div>
     {% if matches %}
-    <table>
-      <thead>
-        <tr>
-          <th>#</th><th>Date</th><th>Team 1</th><th>Score</th>
-          <th>Team 2</th><th>Venue</th><th>Referee</th><th>Winner</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for m in matches %}
-        <tr>
-          <td>{{ m.match_id }}</td>
-          <td>{{ m.match_date }}</td>
-          <td>{{ m.team1_name }}</td>
-          <td><b>{{ m.team1_score }} – {{ m.team2_score }}</b></td>
-          <td>{{ m.team2_name }}</td>
-          <td>{{ m.venue_name }}</td>
-          <td>{{ m.referee_name }}</td>
-          <td>{{ m.winner }}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th><th>Date</th><th>Team 1</th><th>Score</th>
+            <th>Team 2</th><th>Venue</th><th>Referee</th><th>Winner</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for m in matches %}
+          <tr>
+            <td>{{ m.match_id }}</td>
+            <td>{{ m.match_date }}</td>
+            <td style="font-weight: 500;">{{ m.team1_name }}</td>
+            <td style="text-align: center; background: rgba(0,0,0,0.02); min-width: 80px;"><b>{{ m.team1_score }} – {{ m.team2_score }}</b></td>
+            <td style="font-weight: 500;">{{ m.team2_name }}</td>
+            <td>{{ m.venue_name }}</td>
+            <td>{{ m.referee_name }}</td>
+            <td>
+              {% if m.winner %}
+                <span style="color: var(--success-text); font-weight: 600;">{{ m.winner }}</span>
+              {% else %}
+                <span style="color: var(--text-muted);">-</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
     {% else %}
-      <p class="empty">No matches recorded for {{ selected_sport_name }} yet.</p>
+      <div class="empty">No matches recorded for {{ selected_sport_name }} yet.</div>
     {% endif %}
   </section>
 
@@ -130,26 +300,28 @@
        TOURNAMENT STANDINGS (VIEW)
        ========================================== -->
   <section id="standings">
-    <h2>🏅 Tournament Standings — {{ selected_sport_name }}</h2>
-    <p style="font-size:12px;color:#888;">Source: <code>Tournament_Standings</code> VIEW</p>
+    <h2>🏅 Tournament Standings</h2>
+    <div class="section-desc">Source: <code>Tournament_Standings</code> VIEW</div>
     {% if standings %}
-    <table>
-      <thead>
-        <tr><th>Team</th><th>Sport</th><th>Wins</th><th>Losses</th></tr>
-      </thead>
-      <tbody>
-        {% for s in standings %}
-        <tr>
-          <td>{{ s.team_name }}</td>
-          <td><span class="sport-badge">{{ s.sport_name }}</span></td>
-          <td>{{ s.wins }}</td>
-          <td>{{ s.losses }}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr><th>Team</th><th>Sport</th><th>Wins</th><th>Losses</th></tr>
+        </thead>
+        <tbody>
+          {% for s in standings %}
+          <tr>
+            <td style="font-weight: 600;">{{ s.team_name }}</td>
+            <td><span class="sport-badge">{{ s.sport_name }}</span></td>
+            <td style="color: var(--success-text); font-weight: 600;">{{ s.wins }}</td>
+            <td style="color: var(--danger-text); font-weight: 600;">{{ s.losses }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
     {% else %}
-      <p class="empty">No standings yet for {{ selected_sport_name }}.</p>
+      <div class="empty">No standings yet for {{ selected_sport_name }}.</div>
     {% endif %}
   </section>
 
@@ -157,57 +329,63 @@
        MANAGE TEAMS
        ========================================== -->
   <section id="manage-teams">
-    <h2>👥 Teams — {{ selected_sport_name }}</h2>
+    <h2>👥 Manage Teams</h2>
+    <div class="section-desc">Add or remove teams for {{ selected_sport_name }}</div>
     <div class="two-col">
-      <div>
-        <h3>Add Team</h3>
-        <form action="/add-team" method="POST">
-          <input type="hidden" name="sport_id" value="{{ selected_sport_id }}" />
-          <div class="field">
-            <label>Team Name</label>
-            <input name="team_name" placeholder="e.g. Chennai Strikers" required />
-          </div>
-          <button type="submit" class="btn-add">Add Team</button>
-        </form>
+      <div style="display: flex; flex-direction: column; gap: 32px;">
+        <div>
+          <h3>Add New Team</h3>
+          <form action="/add-team" method="POST">
+            <input type="hidden" name="sport_id" value="{{ selected_sport_id }}" />
+            <div class="field" style="flex: 1;">
+              <label>Team Name</label>
+              <input name="team_name" placeholder="e.g. Chennai Strikers" required />
+            </div>
+            <button type="submit" class="btn-add">Add Team</button>
+          </form>
+        </div>
 
-        <br/>
-        <h3>Delete Team</h3>
-        {% if teams %}
-        <form action="/delete-team" method="POST">
-          <input type="hidden" name="sport_id" value="{{ selected_sport_id }}" />
-          <div class="field">
-            <label>Select Team</label>
-            <select name="team_id" required>
-              {% for t in teams %}
-                <option value="{{ t.team_id }}">{{ t.team_name }}</option>
-              {% endfor %}
-            </select>
-          </div>
-          <button type="submit" class="btn-del" onclick="return confirm('Delete this team?')">Delete</button>
-        </form>
-        {% else %}
-          <p class="empty">No teams to delete.</p>
-        {% endif %}
+        <div>
+          <h3>Delete Team</h3>
+          {% if teams %}
+          <form action="/delete-team" method="POST">
+            <input type="hidden" name="sport_id" value="{{ selected_sport_id }}" />
+            <div class="field" style="flex: 1;">
+              <label>Select Team to Delete</label>
+              <select name="team_id" required>
+                {% for t in teams %}
+                  <option value="{{ t.team_id }}">{{ t.team_name }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <button type="submit" class="btn-del" onclick="return confirm('WARNING: Are you sure you want to delete this team? Related players and matches might be affected.')">Delete</button>
+          </form>
+          {% else %}
+            <div class="empty">No teams available to delete.</div>
+          {% endif %}
+        </div>
       </div>
 
       <div>
         <h3>All {{ selected_sport_name }} Teams</h3>
         {% if teams %}
-        <table>
-          <thead><tr><th>ID</th><th>Team</th><th>Wins</th><th>Losses</th></tr></thead>
-          <tbody>
-            {% for t in teams %}
-            <tr>
-              <td>{{ t.team_id }}</td>
-              <td>{{ t.team_name }}</td>
-              <td>{{ t.total_wins }}</td>
-              <td>{{ t.total_losses }}</td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
+        <div class="table-container">
+          <table>
+            <thead><tr><th>ID</th><th>Team</th><th>W</th><th>L</th></tr></thead>
+            <tbody>
+              {% for t in teams %}
+              <tr>
+                <td>{{ t.team_id }}</td>
+                <td style="font-weight: 500;">{{ t.team_name }}</td>
+                <td>{{ t.total_wins }}</td>
+                <td>{{ t.total_losses }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
         {% else %}
-          <p class="empty">No teams added for {{ selected_sport_name }} yet.</p>
+          <div class="empty">No teams added for {{ selected_sport_name }} yet.</div>
         {% endif %}
       </div>
     </div>
@@ -217,78 +395,84 @@
        MANAGE PLAYERS
        ========================================== -->
   <section id="manage-players">
-    <h2>🏃 Players — {{ selected_sport_name }}</h2>
+    <h2>🏃 Manage Players</h2>
+    <div class="section-desc">Manage athletes playing for {{ selected_sport_name }} teams</div>
     <div class="two-col">
-      <div>
-        <h3>Add Player</h3>
-        {% if teams %}
-        <form action="/add-player" method="POST">
-          <input type="hidden" name="sport_id" value="{{ selected_sport_id }}" />
-          <div class="field">
-            <label>Player Name</label>
-            <input name="player_name" placeholder="e.g. Arjun Sharma" required />
-          </div>
-          <div class="field">
-            <label>Age</label>
-            <input name="age" type="number" min="1" max="100" placeholder="22" required />
-          </div>
-          <div class="field">
-            <label>Position</label>
-            <input name="position" placeholder="e.g. Forward" />
-          </div>
-          <div class="field">
-            <label>Team ({{ selected_sport_name }} only)</label>
-            <select name="team_id" required>
-              {% for t in teams %}
-                <option value="{{ t.team_id }}">{{ t.team_name }}</option>
-              {% endfor %}
-            </select>
-          </div>
-          <button type="submit" class="btn-add">Add Player</button>
-        </form>
-        {% else %}
-          <p class="empty">Add a {{ selected_sport_name }} team first before adding players.</p>
-        {% endif %}
+      <div style="display: flex; flex-direction: column; gap: 32px;">
+        <div>
+          <h3>Add Player</h3>
+          {% if teams %}
+          <form action="/add-player" method="POST">
+            <input type="hidden" name="sport_id" value="{{ selected_sport_id }}" />
+            <div class="field" style="width: 100%;">
+              <label>Player Name</label>
+              <input name="player_name" placeholder="e.g. Arjun Sharma" required />
+            </div>
+            <div class="field" style="flex: 1;">
+              <label>Age</label>
+              <input name="age" type="number" min="1" max="100" placeholder="22" required />
+            </div>
+            <div class="field" style="flex: 2;">
+              <label>Position</label>
+              <input name="position" placeholder="e.g. Forward" />
+            </div>
+            <div class="field" style="width: 100%;">
+              <label>Team</label>
+              <select name="team_id" required>
+                {% for t in teams %}
+                  <option value="{{ t.team_id }}">{{ t.team_name }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <button type="submit" class="btn-add" style="width: 100%;">Add Player</button>
+          </form>
+          {% else %}
+            <div class="empty" style="text-align: left;">Please add a {{ selected_sport_name }} team first before registering players.</div>
+          {% endif %}
+        </div>
 
-        <br/>
-        <h3>Delete Player</h3>
-        {% if players %}
-        <form action="/delete-player" method="POST">
-          <input type="hidden" name="sport_id" value="{{ selected_sport_id }}" />
-          <div class="field">
-            <label>Select Player</label>
-            <select name="player_id" required>
-              {% for p in players %}
-                <option value="{{ p.player_id }}">{{ p.player_name }} — {{ p.team_name }}</option>
-              {% endfor %}
-            </select>
-          </div>
-          <button type="submit" class="btn-del" onclick="return confirm('Delete this player?')">Delete</button>
-        </form>
-        {% else %}
-          <p class="empty">No players to delete.</p>
-        {% endif %}
+        <div>
+          <h3>Delete Player</h3>
+          {% if players %}
+          <form action="/delete-player" method="POST">
+            <input type="hidden" name="sport_id" value="{{ selected_sport_id }}" />
+            <div class="field" style="flex: 1;">
+              <label>Select Player</label>
+              <select name="player_id" required>
+                {% for p in players %}
+                  <option value="{{ p.player_id }}">{{ p.player_name }} ({{ p.team_name }})</option>
+                {% endfor %}
+              </select>
+            </div>
+            <button type="submit" class="btn-del" onclick="return confirm('Delete this player?')">Delete</button>
+          </form>
+          {% else %}
+            <div class="empty">No players to delete.</div>
+          {% endif %}
+        </div>
       </div>
 
       <div>
         <h3>All {{ selected_sport_name }} Players</h3>
         {% if players %}
-        <table>
-          <thead><tr><th>ID</th><th>Name</th><th>Age</th><th>Position</th><th>Team</th></tr></thead>
-          <tbody>
-            {% for p in players %}
-            <tr>
-              <td>{{ p.player_id }}</td>
-              <td>{{ p.player_name }}</td>
-              <td>{{ p.age }}</td>
-              <td>{{ p.position }}</td>
-              <td>{{ p.team_name }}</td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
+        <div class="table-container">
+          <table>
+            <thead><tr><th>ID</th><th>Name</th><th>Age</th><th>Position</th><th>Team</th></tr></thead>
+            <tbody>
+              {% for p in players %}
+              <tr>
+                <td>{{ p.player_id }}</td>
+                <td style="font-weight: 500;">{{ p.player_name }}</td>
+                <td>{{ p.age }}</td>
+                <td>{{ p.position }}</td>
+                <td><span class="sport-badge">{{ p.team_name }}</span></td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
         {% else %}
-          <p class="empty">No players added for {{ selected_sport_name }} yet.</p>
+          <div class="empty">No players registered under {{ selected_sport_name }} yet.</div>
         {% endif %}
       </div>
     </div>
@@ -298,56 +482,62 @@
        MANAGE REFEREES
        ========================================== -->
   <section id="manage-referees">
-    <h2>🟡 Referees — {{ selected_sport_name }}</h2>
+    <h2>🟡 Manage Referees</h2>
+    <div class="section-desc">Assign officials for {{ selected_sport_name }}</div>
     <div class="two-col">
-      <div>
-        <h3>Add Referee</h3>
-        <form action="/add-referee" method="POST">
-          <input type="hidden" name="sport_id" value="{{ selected_sport_id }}" />
-          <div class="field">
-            <label>Referee Name</label>
-            <input name="referee_name" placeholder="e.g. Rajesh Kumar" required />
-          </div>
-          <button type="submit" class="btn-add">Add Referee</button>
-        </form>
+      <div style="display: flex; flex-direction: column; gap: 32px;">
+        <div>
+          <h3>Add Referee</h3>
+          <form action="/add-referee" method="POST">
+            <input type="hidden" name="sport_id" value="{{ selected_sport_id }}" />
+            <div class="field" style="flex: 1;">
+              <label>Referee Name</label>
+              <input name="referee_name" placeholder="e.g. Rajesh Kumar" required />
+            </div>
+            <button type="submit" class="btn-add">Add Referee</button>
+          </form>
+        </div>
 
-        <br/>
-        <h3>Delete Referee</h3>
-        {% if referees %}
-        <form action="/delete-referee" method="POST">
-          <input type="hidden" name="sport_id" value="{{ selected_sport_id }}" />
-          <div class="field">
-            <label>Select Referee</label>
-            <select name="referee_id" required>
-              {% for r in referees %}
-                <option value="{{ r.referee_id }}">{{ r.referee_name }}</option>
-              {% endfor %}
-            </select>
-          </div>
-          <button type="submit" class="btn-del" onclick="return confirm('Delete this referee?')">Delete</button>
-        </form>
-        {% else %}
-          <p class="empty">No referees to delete.</p>
-        {% endif %}
+        <div>
+          <h3>Delete Referee</h3>
+          {% if referees %}
+          <form action="/delete-referee" method="POST">
+            <input type="hidden" name="sport_id" value="{{ selected_sport_id }}" />
+            <div class="field" style="flex: 1;">
+              <label>Select Referee</label>
+              <select name="referee_id" required>
+                {% for r in referees %}
+                  <option value="{{ r.referee_id }}">{{ r.referee_name }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <button type="submit" class="btn-del" onclick="return confirm('Delete this referee?')">Delete</button>
+          </form>
+          {% else %}
+            <div class="empty">No referees available to delete.</div>
+          {% endif %}
+        </div>
       </div>
 
       <div>
         <h3>All {{ selected_sport_name }} Referees</h3>
         {% if referees %}
-        <table>
-          <thead><tr><th>ID</th><th>Name</th><th>Sport</th></tr></thead>
-          <tbody>
-            {% for r in referees %}
-            <tr>
-              <td>{{ r.referee_id }}</td>
-              <td>{{ r.referee_name }}</td>
-              <td><span class="sport-badge">{{ r.sport_name }}</span></td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
+        <div class="table-container">
+          <table>
+            <thead><tr><th>ID</th><th>Name</th><th>Sport Assignment</th></tr></thead>
+            <tbody>
+              {% for r in referees %}
+              <tr>
+                <td>{{ r.referee_id }}</td>
+                <td style="font-weight: 500;">{{ r.referee_name }}</td>
+                <td><span class="sport-badge">{{ r.sport_name }}</span></td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
         {% else %}
-          <p class="empty">No referees added for {{ selected_sport_name }} yet.</p>
+          <div class="empty">No referees added for {{ selected_sport_name }} yet.</div>
         {% endif %}
       </div>
     </div>
@@ -357,80 +547,88 @@
        ADD / DELETE MATCH
        ========================================== -->
   <section id="manage-matches">
-    <h2>➕ Add / Delete Match — {{ selected_sport_name }}</h2>
-    <p style="font-size:12px;color:#888;">
-      ⚡ Only <strong>{{ selected_sport_name }}</strong> teams and referees shown.
-      The <code>After_Match_Insert</code> trigger auto-updates wins &amp; losses.
-      Only future dates are allowed.
-    </p>
+    <h2>➕ Match Scheduling</h2>
+    <div class="section-desc">
+      ⚡ Only <strong>{{ selected_sport_name }}</strong> teams and referees are displayed here.<br/>
+      The <code>After_Match_Insert</code> DB trigger automatically updates team wins &amp; losses.
+    </div>
     <div class="two-col">
-      <div>
-        <h3>Schedule Match</h3>
-        {% if teams|length >= 2 and referees %}
-        <form action="/add-match" method="POST">
-          <input type="hidden" name="sport_id" value="{{ selected_sport_id }}" />
-          <div class="field">
-            <label>Venue</label>
-            <select name="venue_id" required>
-              {% for v in venues %}
-                <option value="{{ v.venue_id }}">{{ v.venue_name }}, {{ v.city }}</option>
-              {% endfor %}
-            </select>
-          </div>
-          <div class="field">
-            <label>Referee ({{ selected_sport_name }} only)</label>
-            <select name="referee_id" required>
-              {% for r in referees %}
-                <option value="{{ r.referee_id }}">{{ r.referee_name }}</option>
-              {% endfor %}
-            </select>
-          </div>
-          <div class="field">
-            <label>Team 1 ({{ selected_sport_name }} only)</label>
-            <select name="team1_id" required>
-              {% for t in teams %}
-                <option value="{{ t.team_id }}">{{ t.team_name }}</option>
-              {% endfor %}
-            </select>
-          </div>
-          <div class="field">
-            <label>Team 1 Score</label>
-            <input name="team1_score" type="number" min="0" value="0" required style="width:65px"/>
-          </div>
-          <div class="field">
-            <label>Team 2 ({{ selected_sport_name }} only)</label>
-            <select name="team2_id" required>
-              {% for t in teams %}
-                <option value="{{ t.team_id }}">{{ t.team_name }}</option>
-              {% endfor %}
-            </select>
-          </div>
-          <div class="field">
-            <label>Team 2 Score</label>
-            <input name="team2_score" type="number" min="0" value="0" required style="width:65px"/>
-          </div>
-          <div class="field">
-            <label>Match Date (future dates only)</label>
-            <!-- min="{{ today }}" blocks past dates in the date picker -->
-            <input name="match_date" type="date" min="{{ today }}" required />
-          </div>
-          <button type="submit" class="btn-add">Schedule Match</button>
-        </form>
-        {% else %}
-          <p class="empty">
-            You need at least <strong>2 teams</strong> and <strong>1 referee</strong>
-            under {{ selected_sport_name }} to schedule a match.
-          </p>
-        {% endif %}
+      <div style="display: flex; flex-direction: column; gap: 32px;">
+        <div>
+          <h3>Schedule New Match</h3>
+          {% if teams|length >= 2 and referees %}
+          <form action="/add-match" method="POST" style="background: rgba(0,0,0,0.02); padding: 16px; border-radius: 8px; border: 1px solid var(--border-color);">
+            <style>[data-theme="dark"] form { background: rgba(255,255,255,0.02) !important; }</style>
+            
+            <input type="hidden" name="sport_id" value="{{ selected_sport_id }}" />
+            <div class="field" style="width: 100%;">
+              <label>Match Date (future dates only)</label>
+              <input name="match_date" type="date" min="{{ today }}" required />
+            </div>
+            <div class="field" style="width: 100%;">
+              <label>Venue Location</label>
+              <select name="venue_id" required>
+                {% for v in venues %}
+                  <option value="{{ v.venue_id }}">{{ v.venue_name }}, {{ v.city }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="field" style="width: 100%;">
+              <label>Assigned Referee</label>
+              <select name="referee_id" required>
+                {% for r in referees %}
+                  <option value="{{ r.referee_id }}">{{ r.referee_name }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            
+            <div style="width: 100%; display: flex; gap: 16px; margin-top: 8px;">
+              <div class="field" style="flex: 2;">
+                <label>Team 1 (Home)</label>
+                <select name="team1_id" required>
+                  {% for t in teams %}
+                    <option value="{{ t.team_id }}">{{ t.team_name }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="field" style="flex: 1;">
+                <label>Score 1</label>
+                <input name="team1_score" type="number" min="0" value="0" required />
+              </div>
+            </div>
+
+            <div style="width: 100%; display: flex; gap: 16px;">
+              <div class="field" style="flex: 2;">
+                <label>Team 2 (Away)</label>
+                <select name="team2_id" required>
+                  {% for t in teams %}
+                    <option value="{{ t.team_id }}">{{ t.team_name }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="field" style="flex: 1;">
+                <label>Score 2</label>
+                <input name="team2_score" type="number" min="0" value="0" required />
+              </div>
+            </div>
+            
+            <button type="submit" class="btn-add" style="width: 100%; margin-top: 10px;">Schedule Match</button>
+          </form>
+          {% else %}
+            <div class="empty" style="text-align: left;">
+              To schedule a match, you need at least <strong>2 {{ selected_sport_name }} teams</strong> and <strong>1 referee</strong> defined.
+            </div>
+          {% endif %}
+        </div>
       </div>
 
       <div>
-        <h3>Delete Match</h3>
+        <h3>Delete Match History</h3>
         {% if matches %}
         <form action="/delete-match" method="POST">
           <input type="hidden" name="sport_id" value="{{ selected_sport_id }}" />
-          <div class="field">
-            <label>Select Match</label>
+          <div class="field" style="flex: 1;">
+            <label>Select Match ID</label>
             <select name="match_id" required>
               {% for m in matches %}
                 <option value="{{ m.match_id }}">
@@ -439,15 +637,65 @@
               {% endfor %}
             </select>
           </div>
-          <button type="submit" class="btn-del" onclick="return confirm('Delete this match?')">Delete</button>
+          <button type="submit" class="btn-del" onclick="return confirm('Do you really want to delete this recorded match? This action cannot be undone.')">Delete Record</button>
         </form>
         {% else %}
-          <p class="empty">No matches to delete.</p>
+          <div class="empty">No match records available to delete.</div>
         {% endif %}
       </div>
     </div>
   </section>
 
 </main>
+
+<script>
+  // Theme Toggle Logic
+  const themeToggle = document.getElementById('theme-toggle');
+  const body = document.documentElement;
+  
+  // Check local storage or system preference
+  const currentTheme = localStorage.getItem('theme');
+  if (currentTheme === 'dark' || (!currentTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+    body.setAttribute('data-theme', 'dark');
+    themeToggle.textContent = '☀️';
+  } else {
+    themeToggle.textContent = '🌙';
+  }
+
+  themeToggle.addEventListener('click', () => {
+    if (body.getAttribute('data-theme') === 'dark') {
+      body.removeAttribute('data-theme');
+      localStorage.setItem('theme', 'light');
+      themeToggle.textContent = '🌙';
+    } else {
+      body.setAttribute('data-theme', 'dark');
+      localStorage.setItem('theme', 'dark');
+      themeToggle.textContent = '☀️';
+    }
+  });
+
+  // Eye Comfort Shield Logic
+  const shieldToggle = document.getElementById('shield-toggle');
+  const eyeShield = document.getElementById('eye-shield');
+
+  // Check local storage for shield state
+  const shieldActive = localStorage.getItem('shield') === 'active';
+  if(shieldActive) {
+    eyeShield.classList.add('active');
+    shieldToggle.style.backgroundColor = 'var(--badge-bg)';
+  }
+
+  shieldToggle.addEventListener('click', () => {
+    eyeShield.classList.toggle('active');
+    if (eyeShield.classList.contains('active')) {
+      localStorage.setItem('shield', 'active');
+      shieldToggle.style.backgroundColor = 'var(--badge-bg)';
+    } else {
+      localStorage.setItem('shield', 'inactive');
+      shieldToggle.style.backgroundColor = 'var(--card-bg)';
+    }
+  });
+</script>
+
 </body>
 </html>
