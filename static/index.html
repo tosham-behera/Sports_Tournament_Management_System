@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sports Tournament Dashboard</title>
-    <!-- CSS -->
+    
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <!-- Favicon -->
+    
     <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/3513/3513812.png">
 </head>
 <body>
@@ -14,9 +14,9 @@
 <div id="eye-shield"></div>
 
 <div class="app-container">
-    <!-- Main Content Area -->
+    
     <main class="content">
-        <!-- Top Bar / Navigation -->
+        
         <header class="top-bar">
             <div class="logo">
                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/><path d="M12 2v20"/><path d="M4.93 4.93l14.14 14.14"/><path d="M4.93 19.07L19.07 4.93"/></svg>
@@ -54,7 +54,6 @@
             </div>
         {% endif %}
 
-        <!-- Hero Section -->
         <div class="hero-card">
             <img src="{{ url_for('static', filename='img/' + selected_sport_name.lower() + '.png') }}" class="hero-video" style="object-position: center 20%;">
             <div class="hero-overlay">
@@ -65,12 +64,11 @@
                     <span class="badge" style="background: rgba(59, 130, 246, 0.5); color: white; border: 1px solid rgba(255,255,255,0.3); backdrop-filter: blur(4px);">PRO LEAGUE</span>
                 </div>
             </div>
-            <!-- Decorative Shapes -->
+            
             <div style="position: absolute; top: -20%; right: -10%; width: 400px; height: 400px; background: var(--accent-secondary); filter: blur(100px); opacity: 0.4; border-radius: 50%; z-index: 1;"></div>
             <div style="position: absolute; bottom: -20%; left: 10%; width: 300px; height: 300px; background: var(--accent-primary); filter: blur(80px); opacity: 0.3; border-radius: 50%; z-index: 1;"></div>
         </div>
 
-        <!-- Sport Selection Grid -->
         <div class="sport-grid">
             {% for s in sports %}
                 <a href="/?sport_id={{ s.sport_id }}" class="sport-card {{ 'active' if s.sport_id == selected_sport_id else '' }}">
@@ -82,9 +80,6 @@
             {% endfor %}
         </div>
 
-        <!-- Dashboard Content -->
-        
-        <!-- Match History Section -->
         <section id="matches" class="card" style="margin-bottom: 2rem;">
             <div class="card-header">
                 <h2 class="card-title">Recent Matches</h2>
@@ -127,7 +122,7 @@
         </section>
 
         <div class="dashboard-row">
-            <!-- Standings -->
+            
             <section id="standings" class="card">
                 <div class="card-header">
                     <h2 class="card-title">Standings</h2>
@@ -161,7 +156,6 @@
                 {% endif %}
             </section>
 
-            <!-- Teams Management -->
             <section id="manage-teams" class="card">
                 <div class="card-header">
                     <h2 class="card-title">Manage Teams</h2>
@@ -208,7 +202,7 @@
         </div>
 
         <div class="dashboard-row">
-            <!-- Players Management -->
+            
             <section id="manage-players" class="card">
                 <div class="card-header">
                     <h2 class="card-title">Player Roster</h2>
@@ -271,7 +265,6 @@
                 </div>
             </section>
 
-            <!-- Referee Management -->
             <section id="manage-referees" class="card">
                 <div class="card-header">
                     <h2 class="card-title">Officials</h2>
@@ -309,7 +302,6 @@
             </section>
         </div>
 
-        <!-- Scheduling Section -->
         <section id="manage-matches" class="card">
             <div class="card-header">
                 <h2 class="card-title">Schedule New Match</h2>
@@ -386,7 +378,6 @@
     </main>
 </div>
 
-<!-- JS -->
 <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 
 </body>

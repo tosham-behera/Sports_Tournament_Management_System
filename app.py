@@ -8,28 +8,22 @@ def get_db():
     return mysql.connector.connect(
         host="localhost",
         user="root",
-        password="24T@s#am20", #change the passsworrd
+        password="NOOB",
         database="sports_tournament"
     )
 
-# ============================================
-# HOME — match history + standings
-# ============================================
 @app.route("/")
 def index():
     db = get_db()
     cursor = db.cursor(dictionary=True)
 
-    # All sports for tab buttons
     cursor.execute("SELECT * FROM Sports")
     sports = cursor.fetchall()
 
-    # Selected sport (default: first sport)
     selected_sport_id = request.args.get("sport_id", sports[0]["sport_id"] if sports else None)
     selected_sport_id = int(selected_sport_id)
     selected_sport_name = next((s["sport_name"] for s in sports if s["sport_id"] == selected_sport_id), "")
 
-    # Complex JOIN query — match history for selected sport
     cursor.execute("""
         SELECT
             m.match_id,
@@ -57,11 +51,9 @@ def index():
     """, (selected_sport_id,))
     matches = cursor.fetchall()
 
-    # Tournament_Standings VIEW filtered by sport
     cursor.execute("SELECT * FROM Tournament_Standings WHERE sport_name = %s", (selected_sport_name,))
     standings = cursor.fetchall()
 
-    # Teams for selected sport only
     cursor.execute("""
         SELECT t.team_id, t.team_name, t.total_wins, t.total_losses, s.sport_name
         FROM Teams t JOIN Sports s ON t.sport_id = s.sport_id
@@ -69,7 +61,6 @@ def index():
     """, (selected_sport_id,))
     teams = cursor.fetchall()
 
-    # Referees for selected sport only
     cursor.execute("""
         SELECT r.referee_id, r.referee_name, s.sport_name, s.sport_id
         FROM Referees r JOIN Sports s ON r.sport_id = s.sport_id
@@ -77,7 +68,6 @@ def index():
     """, (selected_sport_id,))
     referees = cursor.fetchall()
 
-    # Players for selected sport only
     cursor.execute("""
         SELECT p.player_id, p.player_name, p.age, p.position, t.team_name, s.sport_name
         FROM Players p
@@ -93,7 +83,6 @@ def index():
     cursor.close()
     db.close()
 
-    # Today's date passed to frontend for min date on input
     today = date.today().isoformat()
 
     return render_template("index.html",
@@ -111,9 +100,6 @@ def index():
         error=request.args.get("error", None)
     )
 
-# ============================================
-# TEAMS — Add / Delete
-# ============================================
 @app.route("/add-team", methods=["POST"])
 def add_team():
     team_name = request.form["team_name"]
@@ -138,9 +124,6 @@ def delete_team():
     db.close()
     return redirect(f"/?sport_id={sport_id}&message=Team+deleted")
 
-# ============================================
-# PLAYERS — Add / Delete
-# ============================================
 @app.route("/add-player", methods=["POST"])
 def add_player():
     player_name = request.form["player_name"]
@@ -171,9 +154,6 @@ def delete_player():
     db.close()
     return redirect(f"/?sport_id={sport_id}&message=Player+deleted")
 
-# ============================================
-# REFEREES — Add / Delete
-# ============================================
 @app.route("/add-referee", methods=["POST"])
 def add_referee():
     referee_name = request.form["referee_name"]
@@ -198,10 +178,6 @@ def delete_referee():
     db.close()
     return redirect(f"/?sport_id={sport_id}&message=Referee+deleted")
 
-# ============================================
-# MATCHES — Add / Delete
-# Validates: same sport, not same team, future date
-# ============================================
 @app.route("/add-match", methods=["POST"])
 def add_match():
     sport_id    = request.form["sport_id"]
@@ -213,18 +189,15 @@ def add_match():
     team2_score = request.form["team2_score"]
     match_date  = request.form["match_date"]
 
-    # Validate: match date must be today or future
     if date.fromisoformat(match_date) < date.today():
         return redirect(f"/?sport_id={sport_id}&error=Match+date+cannot+be+in+the+past!")
 
-    # Validate: team1 and team2 must be different
     if team1_id == team2_id:
         return redirect(f"/?sport_id={sport_id}&error=Team+1+and+Team+2+cannot+be+the+same!")
 
     db = get_db()
     cursor = db.cursor(dictionary=True)
 
-    # Validate: both teams must belong to same sport
     cursor.execute("SELECT sport_id FROM Teams WHERE team_id = %s", (team1_id,))
     t1 = cursor.fetchone()
     cursor.execute("SELECT sport_id FROM Teams WHERE team_id = %s", (team2_id,))
@@ -234,7 +207,6 @@ def add_match():
         cursor.close(); db.close()
         return redirect(f"/?sport_id={sport_id}&error=Both+teams+must+belong+to+the+same+sport!")
 
-    # Validate: referee must belong to same sport
     cursor.execute("SELECT sport_id FROM Referees WHERE referee_id = %s", (referee_id,))
     ref = cursor.fetchone()
     if ref["sport_id"] != t1["sport_id"]:
@@ -264,6 +236,5 @@ def delete_match():
     db.close()
     return redirect(f"/?sport_id={sport_id}&message=Match+deleted")
 
-# ============================================
 if __name__ == "__main__":
     app.run(debug=True, port=3000)

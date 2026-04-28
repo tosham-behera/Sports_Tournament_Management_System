@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Theme Toggle Logic
     const themeToggle = document.getElementById('theme-toggle');
     const body = document.documentElement;
     
@@ -15,7 +14,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // Check local storage or system preference
     const currentTheme = localStorage.getItem('theme');
     if (currentTheme === 'dark' || (!currentTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
         set_theme('dark');
@@ -28,7 +26,6 @@ document.addEventListener('DOMContentLoaded', () => {
         set_theme(isDark ? 'light' : 'dark');
     });
 
-    // Eye Comfort Shield Logic
     const shieldToggle = document.getElementById('shield-toggle');
     const eyeShield = document.getElementById('eye-shield');
 
@@ -52,7 +49,6 @@ document.addEventListener('DOMContentLoaded', () => {
         set_shield(!isActive);
     });
 
-    // Intersection Observer for Scroll Animations
     const observerOptions = {
         threshold: 0.1,
         rootMargin: '0px 0px -50px 0px'
@@ -72,7 +68,6 @@ document.addEventListener('DOMContentLoaded', () => {
         observer.observe(el);
     });
 
-    // Active Nav Link Based on Scroll
     const sections = document.querySelectorAll('section[id]');
     window.addEventListener('scroll', () => {
         let current = '';
@@ -92,7 +87,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Custom Form Validation & Loading State
     const forms = document.querySelectorAll('form');
     forms.forEach(form => {
         form.addEventListener('submit', (e) => {
@@ -104,7 +98,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Auto-hide alerts after 5 seconds
     const alerts = document.querySelectorAll('.alert');
     alerts.forEach(alert => {
         setTimeout(() => {
