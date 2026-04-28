@@ -2,13 +2,13 @@ from flask import Flask, render_template, request, redirect
 import mysql.connector
 from datetime import date
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder='static')
 
 def get_db():
     return mysql.connector.connect(
         host="localhost",
         user="root",
-        password="", #change the passsworrd
+        password="24T@s#am20", #change the passsworrd
         database="sports_tournament"
     )
 
